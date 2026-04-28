@@ -1,0 +1,227 @@
+{
+  "entities": {
+    "EarthInsight": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "EarthInsight",
+      "type": "object",
+      "description": "Provides up-to-date or historical data and insights about Earth's atmospheric conditions, water levels, oxygen, and temperature.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the EarthInsight entity."
+        },
+        "recordedAt": {
+          "type": "string",
+          "description": "The date and time when this Earth insight data was recorded.",
+          "format": "date-time"
+        },
+        "atmosphereDescription": {
+          "type": "string",
+          "description": "A general description of Earth's atmospheric composition and conditions."
+        },
+        "waterLevel": {
+          "type": "number",
+          "description": "Global average water levels or a significant metric (e.g., sea level rise in mm)."
+        },
+        "oxygenLevelPercentage": {
+          "type": "number",
+          "description": "Percentage of oxygen in Earth's atmosphere."
+        },
+        "averageTemperatureCelsius": {
+          "type": "number",
+          "description": "Global average surface temperature of Earth in Celsius."
+        }
+      },
+      "required": [
+        "id",
+        "recordedAt",
+        "atmosphereDescription",
+        "waterLevel",
+        "oxygenLevelPercentage",
+        "averageTemperatureCelsius"
+      ]
+    },
+    "Planet": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Planet",
+      "type": "object",
+      "description": "Represents a celestial body classified as a planet, storing key astronomical and physical characteristics for exploration.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Planet entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The common name of the planet."
+        },
+        "distanceFromSunAu": {
+          "type": "number",
+          "description": "Average distance of the planet from the Sun in Astronomical Units (AU)."
+        },
+        "gravityMetersPerSecondSquared": {
+          "type": "number",
+          "description": "Surface gravity of the planet in meters per second squared (m/s²)."
+        },
+        "atmosphereDescription": {
+          "type": "string",
+          "description": "A detailed description of the planet's atmospheric composition and conditions, if any."
+        },
+        "moonsCount": {
+          "type": "number",
+          "description": "The number of natural satellites (moons) orbiting the planet."
+        },
+        "orbitalPeriodDays": {
+          "type": "number",
+          "description": "The time it takes for the planet to complete one orbit around its star, in Earth days."
+        },
+        "rotationalPeriodHours": {
+          "type": "number",
+          "description": "The time it takes for the planet to complete one rotation on its axis, in Earth hours."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to an illustrative image of the planet.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "distanceFromSunAu",
+        "gravityMetersPerSecondSquared",
+        "atmosphereDescription",
+        "moonsCount",
+        "orbitalPeriodDays",
+        "rotationalPeriodHours",
+        "imageUrl"
+      ]
+    },
+    "AstronomyPicture": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AstronomyPicture",
+      "type": "object",
+      "description": "Stores details for an astronomy picture of the day, typically fetched from a service like NASA APOD.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AstronomyPicture entity. Often derived from the date or a UUID."
+        },
+        "date": {
+          "type": "string",
+          "description": "The calendar date for which the astronomy picture was featured (e.g., YYYY-MM-DD).",
+          "format": "date"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title provided for the astronomy picture."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "A detailed explanation or description of the image content."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "The URL to the standard resolution image of the day.",
+          "format": "uri"
+        },
+        "hdImageUrl": {
+          "type": "string",
+          "description": "The URL to the high-definition version of the image, if available.",
+          "format": "uri"
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "Specifies the type of media (e.g., 'image', 'video')."
+        },
+        "copyright": {
+          "type": "string",
+          "description": "The copyright holder of the image, if specified."
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "title",
+        "explanation",
+        "imageUrl",
+        "mediaType"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "user",
+          "schema": {
+            "$ref": "#/backend/entities/user"
+          },
+          "description": "Stores individual user profile data. Accessible only by the authenticated user whose ID matches `userId`. This path addresses the user's request for a 'separate folder for all the login details'. Assumes a 'user' entity schema is defined to store profile information.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique Firebase Authentication UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/earthInsights/{earthInsightId}",
+        "definition": {
+          "entityName": "EarthInsight",
+          "schema": {
+            "$ref": "#/backend/entities/EarthInsight"
+          },
+          "description": "Contains up-to-date or historical data and insights about Earth's conditions. All documents in this collection are publicly readable by any user, authenticated or unauthenticated.",
+          "params": [
+            {
+              "name": "earthInsightId",
+              "description": "The unique identifier for an EarthInsight document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/planets/{planetId}",
+        "definition": {
+          "entityName": "Planet",
+          "schema": {
+            "$ref": "#/backend/entities/Planet"
+          },
+          "description": "Stores information about various celestial planets. All documents in this collection are publicly readable by any user, authenticated or unauthenticated.",
+          "params": [
+            {
+              "name": "planetId",
+              "description": "The unique identifier for a Planet document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/astronomyPictures/{astronomyPictureId}",
+        "definition": {
+          "entityName": "AstronomyPicture",
+          "schema": {
+            "$ref": "#/backend/entities/AstronomyPicture"
+          },
+          "description": "Stores NASA's Astronomy Picture of the Day data. All documents in this collection are publicly readable by any user, authenticated or unauthenticated.",
+          "params": [
+            {
+              "name": "astronomyPictureId",
+              "description": "The unique identifier for an AstronomyPicture document, often derived from its date."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The proposed Firestore structure prioritizes security, scalability, and debuggability by adhering to the core design principles and strategy mandates. The application primarily features public, read-only content, and user-specific profiles for authentication management.\n\n**Authorization Independence (CRITICAL):** For the `EarthInsight`, `Planet`, and `AstronomyPicture` collections, authorization independence is achieved by making all documents universally readable. There are no hierarchical dependencies or conditional lookups (`get()`) required in security rules, as access is global. For the `/users/{userId}` collection, authorization is strictly path-based, meaning a user's profile is accessible only via their specific `userId` in the path. This design inherently avoids cross-document authorization dependencies and supports atomic operations, as each document's access can be determined solely by its path and the `request.auth.uid`.\n\n**Structural Segregation & Homogeneous Security Posture:** Each top-level collection (`/earthInsights`, `/planets`, `/astronomyPictures`, `/users`) is designed to have a uniform security posture. All documents within `/earthInsights`, `/planets`, and `/astronomyPictures` are publicly readable. All documents within `/users/{userId}` are private to their respective owners. This segregation simplifies security rules, as there's no need for complex logic to differentiate access within a single collection.\n\n**QAPs (Rules are not Filters):**\n*   **Public Collections (`/earthInsights`, `/planets`, `/astronomyPictures`):** Security rules will allow `list` operations for all users (authenticated and unauthenticated) to return all documents. This aligns perfectly with QAPs, as the client can retrieve all documents without server-side filtering by rules.\n*   **Private User Profiles (`/users/{userId}`):** Security rules will restrict `read` and `write` access to `request.auth.uid == userId`. For `list` operations on the `/users` collection, rules would typically disallow or restrict this to administrators, ensuring that a user can only access their own profile and fulfilling the QAP principle where `list` operations return only explicitly authorized documents. No user can `list` all user profiles unless specifically granted, preventing unintentional data exposure.\n\n**Denormalization:** Given the largely public nature of the data and the path-based authorization for user profiles, extensive denormalization for authorization context is not required. The public collections inherently do not have authorization dependencies, and the `users` collection's owner is directly identified by the `userId` in the path, making it self-contained.\n\n**User Login Details:** The user's request for a 'separate folder for all the login details' is addressed by the `/users/{userId}` collection. This collection will store user profiles, which includes information derived from their login (e.g., display name, email, profile picture) from providers like Google and Facebook. Firebase Authentication itself handles the secure storage of actual login credentials. The `user` entity schema, though not provided in the original `backend.entities`, is a standard and necessary component for managing user profiles in an authenticated application context. Its inclusion as `#/backend/entities/user` assumes such a schema would be defined for the application's user model."
+  }
+}

@@ -1,0 +1,72 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 51 59% 90%; /* Soft Background #F7F1D6 */
+    --foreground: 0 0% 0%; /* Pure Black for maximum visibility #000000 */
+    --card: 50 44% 83%; /* Surface / Cards #E7E0BF */
+    --card-foreground: 0 0% 0%;
+    --popover: 51 59% 90%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 76% 55%; /* Primary Red #E43636 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 50 30% 75%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 50 44% 83%;
+    --muted-foreground: 0 0% 25%; /* Darker Gray for readability #404040 */
+    --accent: 20 100% 88%; /* Accent Warm Glow #FFD7C2 */
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 50 30% 75%;
+    --input: 50 30% 75%;
+    --ring: 0 76% 55%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .glass-card {
+    @apply bg-card/90 backdrop-blur-xl border border-white/30 shadow-sm;
+  }
+  .glass-nav {
+    @apply bg-background/80 backdrop-blur-lg border-b border-border/40;
+  }
+}
+
+.font-headline {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(30px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(30px) rotate(-360deg); }
+}
+
+.animate-orbit {
+  animation: orbit 10s linear infinite;
+}

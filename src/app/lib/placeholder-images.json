@@ -1,0 +1,71 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "earth-view",
+      "description": "Earth from space showing its blue oceans and white clouds",
+      "imageUrl": "https://images.unsplash.com/photo-1643330683233-ff2ac89b002c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxlYXJ0aCUyMHNwYWNlfGVufDB8fHx8MTc3MTIxNjA2OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "earth space"
+    },
+    {
+      "id": "mars-view",
+      "description": "The red surface of Mars with its dusty craters",
+      "imageUrl": "https://images.unsplash.com/photo-1590907043334-8eba76905b92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYXJzJTIwcGxhbmV0fGVufDB8fHx8MTc3MTI1NTg1NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mars planet"
+    },
+    {
+      "id": "jupiter-view",
+      "description": "Jupiter's swirling gas bands and the Great Red Spot",
+      "imageUrl": "https://images.unsplash.com/photo-1614314169000-4cf229a1db33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxqdXBpdGVyJTIwcGxhbmV0fGVufDB8fHx8MTc3MTI1NTg1NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "jupiter planet"
+    },
+    {
+      "id": "galaxy-view",
+      "description": "A distant spiral galaxy glowing in deep space",
+      "imageUrl": "https://images.unsplash.com/photo-1628317887507-3c3e2ddd3281?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYWxheHklMjBuZWJ1bGF8ZW58MHx8fHwxNzcxMTY4OTcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "galaxy nebula"
+    },
+    {
+      "id": "apollo-earthrise",
+      "description": "Earth rising over the lunar horizon",
+      "imageUrl": "https://images.unsplash.com/photo-1706285644467-45769812f872?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZWFydGhyaXNlJTIwbW9vbnxlbnwwfHx8fDE3NzEyNTU4NTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "earthrise moon"
+    },
+    {
+      "id": "mercury-view",
+      "description": "The scorched, cratered surface of Mercury",
+      "imageUrl": "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?q=80&w=1000",
+      "imageHint": "mercury planet"
+    },
+    {
+      "id": "venus-view",
+      "description": "The thick, yellowish clouds of Venus",
+      "imageUrl": "https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?q=80&w=1000",
+      "imageHint": "venus planet"
+    },
+    {
+      "id": "saturn-view",
+      "description": "The spectacular rings of Saturn",
+      "imageUrl": "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?q=80&w=1000",
+      "imageHint": "saturn planet"
+    },
+    {
+      "id": "uranus-view",
+      "description": "The cyan-colored ice giant Uranus",
+      "imageUrl": "https://images.unsplash.com/photo-1614730321146-b6fa6a46bac4?q=80&w=1000",
+      "imageHint": "uranus planet"
+    },
+    {
+      "id": "neptune-view",
+      "description": "The deep blue, windy planet Neptune",
+      "imageUrl": "https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?q=80&w=1000",
+      "imageHint": "neptune planet"
+    },
+    {
+      "id": "sun-view",
+      "description": "The blazing surface of our Sun",
+      "imageUrl": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?q=80&w=1000",
+      "imageHint": "sun surface"
+    }
+  ]
+}

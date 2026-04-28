@@ -1,0 +1,106 @@
+{
+  "placeholderImages": [
+    {
+      "id": "earth-view",
+      "description": "Earth from space (The Blue Marble)",
+      "imageUrl": "https://images-assets.nasa.gov/image/AS17-148-22727/AS17-148-22727~medium.jpg",
+      "imageHint": "earth space"
+    },
+    {
+      "id": "mars-view",
+      "description": "The red planet Mars as seen by Hubble",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA02653/PIA02653~medium.jpg",
+      "imageHint": "mars planet"
+    },
+    {
+      "id": "jupiter-view",
+      "description": "Jupiter and its Great Red Spot",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA04866/PIA04866~medium.jpg",
+      "imageHint": "jupiter planet"
+    },
+    {
+      "id": "galaxy-view",
+      "description": "A distant spiral galaxy glowing in deep space",
+      "imageUrl": "https://images.unsplash.com/photo-1628317887507-3c3e2ddd3281?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYWxheHklMjBuZWJ1bGF8ZW58MHx8fHwxNzcxMTY4OTcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "galaxy nebula"
+    },
+    {
+      "id": "apollo-earthrise",
+      "description": "Earth rising over the lunar horizon",
+      "imageUrl": "https://images-assets.nasa.gov/image/AS08-14-2383/AS08-14-2383~medium.jpg",
+      "imageHint": "earthrise moon"
+    },
+    {
+      "id": "mercury-view",
+      "description": "The scorched, cratered surface of Mercury",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA15162/PIA15162~medium.jpg",
+      "imageHint": "mercury planet"
+    },
+    {
+      "id": "venus-view",
+      "description": "The thick, yellowish clouds of Venus",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA00271/PIA00271~medium.jpg",
+      "imageHint": "venus planet"
+    },
+    {
+      "id": "saturn-view",
+      "description": "The spectacular rings of Saturn",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA01364/PIA01364~medium.jpg",
+      "imageHint": "saturn planet"
+    },
+    {
+      "id": "uranus-view",
+      "description": "The cyan-colored ice giant Uranus",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA18182/PIA18182~medium.jpg",
+      "imageHint": "uranus planet"
+    },
+    {
+      "id": "neptune-view",
+      "description": "The deep blue, windy planet Neptune",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA01492/PIA01492~medium.jpg",
+      "imageHint": "neptune planet"
+    },
+    {
+      "id": "sun-view",
+      "description": "The blazing surface of our Sun",
+      "imageUrl": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000790/GSFC_20171208_Archive_e000790~medium.jpg",
+      "imageHint": "sun surface"
+    },
+    {
+      "id": "pluto-view",
+      "description": "The icy surface of dwarf planet Pluto",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA19952/PIA19952~medium.jpg",
+      "imageHint": "pluto planet"
+    },
+    {
+      "id": "ceres-view",
+      "description": "Dwarf planet Ceres in the asteroid belt",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA18920/PIA18920~medium.jpg",
+      "imageHint": "ceres planet"
+    },
+    {
+      "id": "eris-view",
+      "description": "Artistic rendering of dwarf planet Eris",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA13233/PIA13233~medium.jpg",
+      "imageHint": "eris space"
+    },
+    {
+      "id": "haumea-view",
+      "description": "The football-shaped dwarf planet Haumea",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA12101/PIA12101~medium.jpg",
+      "imageHint": "haumea planet"
+    },
+    {
+      "id": "sedna-view",
+      "description": "The extremely distant minor planet Sedna",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA05560/PIA05560~medium.jpg",
+      "imageHint": "sedna space"
+    },
+    {
+      "id": "makemake-view",
+      "description": "Dwarf planet Makemake in the Kuiper Belt",
+      "imageUrl": "https://images-assets.nasa.gov/image/PIA12103/PIA12103~medium.jpg",
+      "imageHint": "makemake space"
+    }
+  ]
+}

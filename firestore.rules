@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * DOCUMENTATION: EARTH INSIGHTS & PLANETARY DATA EXPLORER
+     * 
+     * Core Philosophy:
+     * This ruleset implements a hybrid security model. It prioritizes public access for 
+     * informational content (Earth insights, planets, and astronomy media) while 
+     * enforcing a strict user-ownership model for personal profile data.
+     * 
+     * Data Structure:
+     * - Public Collections: /earthInsights, /planets, /astronomyPictures (Public Read)
+     * - Private Collections: /users/{userId} (Owner Access Only)
+     * 
+     * Key Security Decisions:
+     * 1. Public Reading: Information about planets and Earth metrics is available to all 
+     *    users (including unauthenticated guests) to encourage exploration.
+     * 2. User Isolation: Following the user's request for a "separate folder for login 
+     *    details," all user profile information is sandboxed under /users/{userId}.
+     * 3. Write Protection: For this prototyping phase, public collections are read-only 
+     *    at the rule level as they lack explicit ownership fields in the current schema. 
+     *    Writes are strictly restricted to authenticated owners in the users collection.
+     * 4. Relational Integrity: In the user collection, we enforce that the document's 
+     *    internal 'id' field must match the Firestore document ID to ensure data consistency.
+     */
+
+    // --- Global Helper Functions ---
+
+    /** Checks if the request is made by a signed-in user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** Checks if the document exists and the current user is the owner. */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for user profiles. Stores "login details" and personal preferences.
+     * @path /users/{userId}
+     * @allow (get/list/create/update) User 'abc' accessing /users/abc.
+     * @deny (create) User 'abc' attempting to create a profile at /users/xyz.
+     * @principle Enforces strict ownership and data consistency between the path and document content.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && resource != null && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Publicly readable collection for Earth atmospheric and environmental data.
+     * @path /earthInsights/{earthInsightId}
+     * @allow (get/list) Any user, including unauthenticated, viewing Earth data.
+     * @deny (create/update/delete) Any user attempting to modify global Earth data.
+     * @principle Provides public read access while preventing unauthorized modifications.
+     */
+    match /earthInsights/{earthInsightId} {
+      allow get, list: if true;
+      // CRITICAL: Cannot implement owner-only writes. The 'EarthInsight' entity is missing an 'ownerId' or 'authorId' field.
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Publicly readable collection for planetary and celestial body information.
+     * @path /planets/{planetId}
+     * @allow (get/list) Any user viewing planetary data.
+     * @deny (create/update/delete) Any user attempting to modify planet statistics.
+     * @principle Provides public read access while preventing unauthorized modifications.
+     */
+    match /planets/{planetId} {
+      allow get, list: if true;
+      // CRITICAL: Cannot implement owner-only writes. The 'Planet' entity is missing an 'ownerId' or 'authorId' field.
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Publicly readable collection for Astronomy Picture of the Day (APOD) content.
+     * @path /astronomyPictures/{astronomyPictureId}
+     * @allow (get/list) Any user viewing the daily astronomy picture.
+     * @deny (create/update/delete) Any user attempting to modify NASA-sourced picture data.
+     * @principle Provides public read access while preventing unauthorized modifications.
+     */
+    match /astronomyPictures/{astronomyPictureId} {
+      allow get, list: if true;
+      // CRITICAL: Cannot implement owner-only writes. The 'AstronomyPicture' entity is missing an 'ownerId' or 'authorId' field.
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+  }
+}
