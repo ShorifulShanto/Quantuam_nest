@@ -263,6 +263,7 @@ const solarData = [
 
 export default function SolarSystemPage() {
   const [viewMode, setViewMode] = useState<"grid" | "interactive">("interactive");
+  const [epicEarthImage, setEpicEarthImage] = useState<string | null>(null);
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
@@ -278,6 +279,28 @@ export default function SolarSystemPage() {
     }
   }, [user, isUserLoading, router, toast]);
 
+  useEffect(() => {
+    // NASA EPIC API Integration - Live Blue Marble Protocol
+    async function fetchEpicData() {
+      try {
+        const response = await fetch('https://epic.gsfc.nasa.gov/api/natural');
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const latest = data[0];
+          const dateParts = latest.date.split(' ')[0].split('-');
+          const year = dateParts[0];
+          const month = dateParts[1];
+          const day = dateParts[2];
+          const imageUrl = `https://epic.gsfc.nasa.gov/archive/natural/${year}/${month}/${day}/png/${latest.image}.png`;
+          setEpicEarthImage(imageUrl);
+        }
+      } catch (err) {
+        console.warn("EPIC Archive Sync Error: Reverting to fallback imagery.", err);
+      }
+    }
+    fetchEpicData();
+  }, []);
+
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -288,7 +311,11 @@ export default function SolarSystemPage() {
 
   if (!user) return null;
 
-  const getPlanetImage = (id: string) => {
+  const getPlanetImage = (id: string, name: string) => {
+    // Prioritize EPIC dynamic imagery for Earth
+    if (name === "Earth" && epicEarthImage) {
+      return { imageUrl: epicEarthImage, description: "Live Earth capture from NASA EPIC", id: "epic-earth" };
+    }
     return PlaceHolderImages.find(img => img.id === id) || PlaceHolderImages[0];
   };
 
@@ -378,7 +405,7 @@ export default function SolarSystemPage() {
             Solar System Exploration
           </h1>
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto leading-relaxed">
-            A comprehensive gateway to the celestial bodies within our solar system. Access high-fidelity 3D visualization or browse our archival planetary datasets.
+            A comprehensive gateway to the celestial bodies within our solar system. Access high-fidelity 3D visualization or browse our archival planetary datasets using live NASA EPIC protocols.
           </p>
         </div>
 
@@ -419,11 +446,11 @@ export default function SolarSystemPage() {
           <section className="py-8 animate-in fade-in zoom-in duration-500 pb-24">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {solarData.map((body) => {
-                const img = getPlanetImage(body.id);
+                const img = getPlanetImage(body.id, body.name);
                 return (
                   <Dialog key={body.id}>
                     <DialogTrigger asChild>
-                      <Card className="bg-card border-border hover:border-primary/50 transition-all cursor-pointer group rounded-[2rem] overflow-hidden h-full shadow-md hover:shadow-xl">
+                      <Card className="bg-card border-2 border-primary hover:border-primary/80 transition-all cursor-pointer group rounded-[2rem] overflow-hidden h-full shadow-md hover:shadow-xl">
                         <div className="aspect-square relative overflow-hidden">
                           <Image src={img.imageUrl} alt={body.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" unoptimized />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
