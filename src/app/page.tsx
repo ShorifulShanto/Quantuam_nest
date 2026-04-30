@@ -100,9 +100,9 @@ export default function Home() {
           muted
           playsInline
           preload="auto"
-          onCanPlay={() => setIsVideoLoading(false)}
+          onLoadedData={() => setIsVideoLoading(false)}
           className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
             isVideoLoading ? 'opacity-0' : 'opacity-100'
           )}
         >
