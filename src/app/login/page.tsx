@@ -44,12 +44,6 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5;
-    }
-  }, []);
-
   const syncUserToFirestore = (user: any) => {
     if (!db) return;
     const userRef = doc(db, 'users', user.uid);
