@@ -70,7 +70,7 @@ export default function Home() {
     }
   }, []);
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777560333/14815836_3840_2160_30fps_k1ogim.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777560353/12052489_3840_2160_30fps_beh71i.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {
