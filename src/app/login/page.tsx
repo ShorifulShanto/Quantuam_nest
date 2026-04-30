@@ -27,6 +27,7 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   
   const router = useRouter();
   const auth = useAuth();
@@ -98,18 +99,47 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    if (!auth) return;
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "System Error",
+        description: "Authentication archives are not yet initialized.",
+      });
+      return;
+    }
+    
+    setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
+    // Ensure the popup isn't blocked by the browser by keeping it as a direct result of user interaction
     try {
       const result = await signInWithPopup(auth, provider);
-      syncUserToFirestore(result.user);
-      router.push("/");
+      if (result.user) {
+        syncUserToFirestore(result.user);
+        toast({
+          title: "Identity Verified",
+          description: `Welcome back, Explorer ${result.user.displayName || ''}.`,
+        });
+        router.push("/");
+      }
     } catch (error: any) {
+      console.error("Google Auth Error:", error);
+      let errorMessage = "Google synchronization failed.";
+      
+      if (error.code === 'auth/popup-blocked') {
+        errorMessage = "The identity popup was blocked by your browser. Please allow popups for this archive.";
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = "Synchronization request was cancelled.";
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Identity window closed before verification.";
+      }
+
       toast({
         variant: "destructive",
         title: "Google Sync Error",
-        description: error.message,
+        description: errorMessage,
       });
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -136,9 +166,9 @@ export default function LoginPage() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full bg-background border-2 border-primary shadow-[0_0_15px_rgba(228,54,54,0.3)] hover:bg-background/90"
+          className="rounded-full bg-[#F7F1D6] border-2 border-[#E43636] shadow-[0_0_15px_rgba(228,54,54,0.3)] hover:bg-[#F7F1D6]/90"
         >
-          <ChevronLeft className="w-5 h-5 text-primary" />
+          <ChevronLeft className="w-5 h-5 text-[#E43636]" />
         </Button>
       </Link>
 
@@ -190,7 +220,7 @@ export default function LoginPage() {
             
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="w-full h-11 bg-primary text-white font-bold rounded-xl text-[10px] uppercase tracking-widest hover:scale-[1.01] transition-all shadow-lg shadow-primary/20"
             >
               {loading ? <Loader2 className="animate-spin w-4 h-4" /> : (isResetMode ? "Dispatch Reset" : isSignUp ? "Create Identity" : "Launch Mission")}
@@ -231,11 +261,13 @@ export default function LoginPage() {
 
           <div className="grid grid-cols-1 gap-2">
             <Button
+              type="button"
               variant="outline"
+              disabled={googleLoading || loading}
               onClick={handleGoogleLogin}
-              className="w-full h-11 bg-background/20 border-border/40 text-[9px] text-foreground hover:bg-background/40 rounded-xl font-bold uppercase tracking-widest backdrop-blur-sm"
+              className="w-full h-11 bg-background/20 border-border/40 text-[9px] text-foreground hover:bg-background/40 rounded-xl font-bold uppercase tracking-widest backdrop-blur-sm transition-all"
             >
-              Sync with Google
+              {googleLoading ? <Loader2 className="animate-spin w-4 h-4" /> : "Sync with Google"}
             </Button>
           </div>
         </CardContent>
