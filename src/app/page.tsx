@@ -64,7 +64,7 @@ export default function Home() {
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777228460/15735937-hd_1920_1080_30fps_1_oflmb5.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/v1777228460/15735937-hd_1920_1080_30fps_1_oflmb5.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {

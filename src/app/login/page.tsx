@@ -154,7 +154,7 @@ export default function LoginPage() {
     }
   };
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 bg-black overflow-hidden">
