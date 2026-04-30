@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,11 +37,18 @@ export default function LoginPage() {
   const [isResetMode, setIsResetMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   const router = useRouter();
   const auth = useAuth();
   const db = useFirestore();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.5;
+    }
+  }, []);
 
   const syncUserToFirestore = (user: any) => {
     if (!db) return;
@@ -157,6 +164,7 @@ export default function LoginPage() {
     <div className="min-h-screen relative flex items-center justify-center p-4 bg-black overflow-hidden">
       <div className="fixed inset-0 z-0 pointer-events-none">
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
