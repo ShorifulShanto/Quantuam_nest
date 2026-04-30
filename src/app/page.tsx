@@ -36,7 +36,7 @@ function FeaturesGrid({ onAccess, onPrefetch }: { onAccess: (e: any, h: string) 
           className="group"
           style={{ animationDelay: `${idx * 0.1}s` }}
         >
-          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 border-2 border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-card/95 to-card/95 shadow-[0_0_20px_rgba(228,54,54,0.1)] hover:shadow-[0_0_35px_rgba(228,54,54,0.3)]">
+          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 border-2 border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-card/95 to-card/95 shadow-[0_0_20px_rgba(228,54,54,0.1)] hover:shadow-[0_0_35px_rgba(228,54,54,0.3)] ring-2 ring-primary">
             <CardHeader className="p-6">
               <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 transition-all border border-primary/40 shadow-[0_0_15px_rgba(228,54,54,0.3)]">
                 <feature.icon className="w-6 h-6 text-primary" />
@@ -64,7 +64,7 @@ export default function Home() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777560311/854275-hd_1280_720_30fps_dbqcoj.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777560333/14815836_3840_2160_30fps_k1ogim.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {
