@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 /**
  * FeaturesGrid - Recalibrated mission selection module.
- * Implements "Archival Hibernation" - prefetching is restricted until explorer interaction.
  */
 function FeaturesGrid({ onAccess, onPrefetch }: { onAccess: (e: any, h: string) => void, onPrefetch: (h: string) => void }) {
   const features = [
@@ -106,6 +105,7 @@ export default function Home() {
           loop
           muted
           playsInline
+          preload="auto"
           onCanPlay={() => setIsVideoLoading(false)}
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
