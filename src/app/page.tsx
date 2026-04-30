@@ -64,7 +64,7 @@ export default function Home() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777229569/14910447-1920-1080-24fps-1-1_ogN2h0gD_1_ggcgye.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777560353/12052489_3840_2160_30fps_beh71i.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {
