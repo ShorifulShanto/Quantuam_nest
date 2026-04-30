@@ -108,7 +108,7 @@ export default function Home() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/65 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
       </div>
       
       <div className="container relative z-10 mx-auto px-4 py-20 lg:py-32">
