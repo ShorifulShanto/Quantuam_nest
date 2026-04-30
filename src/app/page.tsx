@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/firebase";
@@ -36,7 +36,7 @@ function FeaturesGrid({ onAccess, onPrefetch }: { onAccess: (e: any, h: string) 
           className="group"
           style={{ animationDelay: `${idx * 0.1}s` }}
         >
-          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 shadow-[0_0_60px_rgba(228,54,54,0.4)] border-4 border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-card/95 to-card/95">
+          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 border-2 border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-card/95 to-card/95 shadow-[0_0_20px_rgba(228,54,54,0.1)] hover:shadow-[0_0_35px_rgba(228,54,54,0.3)]">
             <CardHeader className="p-6">
               <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 transition-all border border-primary/40 shadow-[0_0_15px_rgba(228,54,54,0.3)]">
                 <feature.icon className="w-6 h-6 text-primary" />

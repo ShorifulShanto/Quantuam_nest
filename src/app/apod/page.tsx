@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,7 +19,7 @@ interface ApodData {
   success?: boolean;
 }
 
-// Recalibrated with a more stable mission key fallback
+// Recalibrated with a more stable mission key
 const NASA_API_KEY = process.env.NEXT_PUBLIC_NASA_API_KEY || "63X0QfFA81wcRSK5h6W2xQNFOKj3MT5EwRIUOl2T";
 
 export default function ApodPage() {
@@ -33,19 +34,29 @@ export default function ApodPage() {
     setCurrentDate(new Date().toISOString().split('T')[0]);
   }, []);
 
-  async function fetchApod(dateToFetch: string) {
+  async function fetchApod(dateToFetch: string, isRetry: boolean = false) {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}&date=${dateToFetch}`);
       
       if (!res.ok) {
+        // Handle the case where "today" isn't ready yet (e.g. 404/400 at midnight)
+        if (!isRetry) {
+          const prevDate = new Date(dateToFetch);
+          prevDate.setDate(prevDate.getDate() - 1);
+          const formattedPrevDate = prevDate.toISOString().split('T')[0];
+          return fetchApod(formattedPrevDate, true);
+        }
+        
         const errorData = await res.json().catch(() => ({ msg: "Archive unreachable" }));
         throw new Error(errorData.msg || "NASA Mission Protocol Error");
       }
       
       const json = await res.json();
       setData(json);
+      // Update the visible date to match what was actually fetched
+      if (json.date) setCurrentDate(json.date);
     } catch (err: any) {
       console.error("APOD Archive Error:", err);
       setError(err.message);
