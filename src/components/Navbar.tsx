@@ -15,9 +15,10 @@ import {
   Globe, 
   Menu, 
   Camera,
-  Volume2
+  Volume2,
+  Settings
 } from "lucide-react";
-import { useAuth, useUser, useFirestore } from "@/firebase";
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,7 +38,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const bottomNavItems = [
   { name: "Earth", href: "/earth", icon: Globe },
   { name: "Search", href: "/search", icon: Search, center: true },
-  { name: "System", href: "/solar-system", icon: Rocket },
+  { name: "Profile", href: "/profile", icon: User },
 ];
 
 export function Navbar() {
@@ -49,25 +50,20 @@ export function Navbar() {
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
 
+  // Real-time listener for user profile
+  const userDocRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, 'users', user.uid);
+  }, [db, user?.uid]);
+
+  const { data: profile } = useDoc(userDocRef);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const isHomePage = pathname === "/";
   const isLoginPage = pathname === "/login";
-
-  useEffect(() => {
-    if (user && db) {
-      const userRef = doc(db, 'users', user.uid);
-      setDoc(userRef, {
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        updatedAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-      }, { merge: true }).catch(() => {});
-    }
-  }, [user, db]);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -133,28 +129,39 @@ export function Navbar() {
                <SheetContent side="right" className="bg-background border-l border-border/40 w-[300px] p-0">
                  <ScrollArea className="h-full w-full p-6">
                    <SheetHeader className="text-left mb-8">
-                     <SheetTitle className="font-headline text-2xl font-bold text-black">Explorer</SheetTitle>
-                     <SheetDescription className="text-black/50">Manage your cosmic path</SheetDescription>
+                     <SheetTitle className="font-headline text-2xl font-bold text-black">Explorer Hub</SheetTitle>
+                     <SheetDescription className="text-black/50">Recalibrate your mission path</SheetDescription>
                    </SheetHeader>
 
                    <div className="space-y-6">
                      <div className="bg-card/20 backdrop-blur-md p-5 rounded-2xl border-2 border-primary shadow-[0_0_20px_rgba(228,54,54,0.3)]">
                         {user ? (
                           <div className="space-y-4">
-                            <div className="flex items-center gap-4">
-                              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                                <AvatarImage src={user.photoURL || undefined} />
+                            <Link href="/profile" className="flex items-center gap-4 group">
+                              <Avatar className="h-12 w-12 border-2 border-primary/20 group-hover:border-primary transition-all">
+                                <AvatarImage src={profile?.photoURL || user.photoURL || undefined} />
                                 <AvatarFallback className="bg-primary/10 text-primary"><User /></AvatarFallback>
                               </Avatar>
                               <div className="overflow-hidden">
-                                <p className="font-bold text-black truncate">{user.displayName}</p>
-                                <p className="text-[10px] text-black/40 truncate uppercase tracking-widest">{user.email}</p>
+                                <p className="font-bold text-black truncate group-hover:text-primary transition-colors">
+                                  {profile?.displayName || user.displayName || 'Unnamed Explorer'}
+                                </p>
+                                <p className="text-[10px] text-black/40 truncate uppercase tracking-widest">
+                                  {profile?.rank || 'Level 1 Explorer'}
+                                </p>
                               </div>
-                            </div>
+                            </Link>
                             <Separator className="bg-black/5" />
-                            <Button variant="ghost" size="sm" className="w-full justify-start text-primary hover:bg-primary/5 gap-3 h-11" onClick={handleLogout}>
-                               <LogOut className="w-4 h-4" /> <span className="text-[10px] uppercase font-bold tracking-widest">Sign Out</span>
-                            </Button>
+                            <div className="grid grid-cols-1 gap-2">
+                               <Button variant="ghost" size="sm" className="w-full justify-start text-primary hover:bg-primary/5 gap-3 h-11" asChild>
+                                  <Link href="/profile">
+                                    <Settings className="w-4 h-4" /> <span className="text-[10px] uppercase font-bold tracking-widest">Profile Protocol</span>
+                                  </Link>
+                               </Button>
+                               <Button variant="ghost" size="sm" className="w-full justify-start text-destructive hover:bg-destructive/5 gap-3 h-11" onClick={handleLogout}>
+                                  <LogOut className="w-4 h-4" /> <span className="text-[10px] uppercase font-bold tracking-widest">Sign Out</span>
+                               </Button>
+                            </div>
                           </div>
                         ) : (
                           <div className="text-center py-2">

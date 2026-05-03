@@ -51,9 +51,11 @@ export default function LoginPage() {
     const userRef = doc(db, 'users', user.uid);
     setDoc(userRef, {
       id: user.uid,
-      displayName: user.displayName,
+      displayName: user.displayName || displayName,
       email: user.email,
       photoURL: user.photoURL,
+      enrolledMissions: ["Basic Astronomy Protocol", "Solar System Fundamentals"],
+      rank: "Cadet",
       updatedAt: serverTimestamp(),
       lastLogin: serverTimestamp(),
     }, { merge: true });
