@@ -10,9 +10,6 @@ import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/com
 import { Rocket, Sparkles, Camera, ArrowRight, Search, Info, Loader2, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * FeaturesGrid - Recalibrated mission selection module.
- */
 function FeaturesGrid({ onAccess, onPrefetch }: { onAccess: (e: any, h: string) => void, onPrefetch: (h: string) => void }) {
   const features = [
     { name: "Solar System", href: "/solar-system", icon: Rocket, desc: "Planetary and gravity archives." },
@@ -64,8 +61,14 @@ export default function Home() {
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Optimized video URL capped at 720p for fast loading
   const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco,f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVideoLoading(false);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {
@@ -100,8 +103,8 @@ export default function Home() {
           loop
           muted
           playsInline
-          preload="auto"
-          onLoadedData={() => setIsVideoLoading(false)}
+          onCanPlay={() => setIsVideoLoading(false)}
+          onPlaying={() => setIsVideoLoading(false)}
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
             isVideoLoading ? 'opacity-0' : 'opacity-100'
