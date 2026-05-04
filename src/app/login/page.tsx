@@ -8,12 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Loader2, ChevronLeft, KeyRound } from "lucide-react";
 import Link from "next/link";
-import { useAuth, useFirestore } from "@/firebase";
+import { useAuth, useFirestore, useUser } from "@/firebase";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   GoogleAuthProvider, 
-  signInWithPopup,
+  signInWithRedirect, 
+  getRedirectResult,
   updateProfile,
   sendPasswordResetEmail
 } from "firebase/auth";
@@ -46,12 +47,35 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
+  // Handle Auth Redirect Result
+  useEffect(() => {
+    if (!auth) return;
+    
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          syncUserToFirestore(result.user);
+          router.push("/");
+        }
+      })
+      .catch((error) => {
+        console.error("Redirect Auth Error:", error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+          toast({
+            variant: "destructive",
+            title: "Verification Failed",
+            description: error.message || "Archive synchronization interrupted.",
+          });
+        }
+      });
+  }, [auth, router]);
+
   const syncUserToFirestore = (user: any) => {
     if (!db) return;
     const userRef = doc(db, 'users', user.uid);
     setDoc(userRef, {
       id: user.uid,
-      displayName: user.displayName || displayName,
+      displayName: user.displayName || displayName || "Cadet",
       email: user.email,
       photoURL: user.photoURL,
       enrolledMissions: ["Basic Astronomy Protocol", "Solar System Fundamentals"],
@@ -63,7 +87,16 @@ export default function LoginPage() {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth || !email) return;
+    if (!auth) return;
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Email Required",
+        description: "Please provide your explorer email to dispatch reset protocols.",
+      });
+      return;
+    }
+    
     setLoading(true);
     try {
       await sendPasswordResetEmail(auth, email);
@@ -113,50 +146,24 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    if (!auth) {
-      toast({
-        variant: "destructive",
-        title: "System Error",
-        description: "Authentication archives are not yet initialized.",
-      });
-      return;
-    }
-    
+    if (!auth) return;
     setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      const result = await signInWithPopup(auth, provider);
-      if (result.user) {
-        syncUserToFirestore(result.user);
-        toast({
-          title: "Identity Verified",
-          description: `Welcome back, Explorer ${result.user.displayName || ''}.`,
-        });
-        router.push("/");
-      }
+      await signInWithRedirect(auth, provider);
     } catch (error: any) {
-      console.error("Google Auth Error:", error);
-      let errorMessage = "Google synchronization failed.";
-      
-      if (error.code === 'auth/popup-blocked') {
-        errorMessage = "The identity popup was blocked by your browser. Please allow popups for this archive.";
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        errorMessage = "Synchronization request was cancelled.";
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage = "Identity window closed before verification.";
-      }
-
+      setGoogleLoading(false);
       toast({
         variant: "destructive",
         title: "Google Sync Error",
-        description: errorMessage,
+        description: error.message,
       });
-    } finally {
-      setGoogleLoading(false);
     }
   };
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
+  // Optimized video URL for performance
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 bg-black overflow-hidden">
@@ -176,7 +183,7 @@ export default function LoginPage() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       </div>
 
       <Link href="/" className="absolute top-6 left-6 z-50">
@@ -189,7 +196,7 @@ export default function LoginPage() {
         </Button>
       </Link>
 
-      <Card className="w-full max-w-[300px] relative z-30 rounded-[2rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-[0_0_80px_rgba(228,54,54,0.5)] bg-[#F7F1D6]/20 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/10">
+      <Card className="w-full max-w-[320px] relative z-30 rounded-[2rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-[0_0_80px_rgba(228,54,54,0.4)] bg-[#F7F1D6]/20 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/10">
         <CardHeader className="text-center pb-4 pt-8 px-5">
           <div className="w-14 h-14 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(228,54,54,0.3)] border border-primary/30">
             {isResetMode ? <KeyRound className="w-7 h-7 text-primary" /> : <Rocket className="w-7 h-7 text-primary" />}
@@ -198,7 +205,7 @@ export default function LoginPage() {
             {isResetMode ? "Reset Protocol" : isSignUp ? "Initialize" : "Welcome Back"}
           </CardTitle>
           <p className="text-[#E43636] font-bold uppercase tracking-[0.4em] text-[9px] mt-1.5 drop-shadow-[0_0_8px_rgba(228,54,54,0.8)]">
-            Quantum Nest Archive
+            Archive Access
           </p>
         </CardHeader>
 
@@ -262,7 +269,7 @@ export default function LoginPage() {
                 onClick={() => setIsResetMode(!isResetMode)}
                 className="text-[9px] text-black hover:text-foreground uppercase tracking-widest font-bold drop-shadow-sm"
               >
-                {isResetMode ? "Return to authentication" : "Misplaced your access key?"}
+                {isResetMode ? "Return to authentication" : "Lost your access key?"}
               </button>
             )}
           </div>
