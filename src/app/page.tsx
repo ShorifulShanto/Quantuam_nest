@@ -63,6 +63,7 @@ export default function Home() {
 
   const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco,f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
 
+  // Fallback to prevent black screen if video is delayed or blocked
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVideoLoading(false);

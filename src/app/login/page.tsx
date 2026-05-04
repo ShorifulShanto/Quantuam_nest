@@ -13,8 +13,7 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   GoogleAuthProvider, 
-  signInWithRedirect, 
-  getRedirectResult,
+  signInWithPopup, 
   updateProfile,
   sendPasswordResetEmail
 } from "firebase/auth";
@@ -38,7 +37,6 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(true);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   
@@ -47,34 +45,7 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (!auth) return;
-    
-    // Attempt to resolve any pending redirect results
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          syncUserToFirestore(result.user);
-          router.push("/");
-        }
-      })
-      .catch((error) => {
-        // Handle only significant errors, ignore if it's just no redirect result
-        if (error.code !== 'auth/no-redirect-result') {
-          console.error("Auth Protocol Error:", error);
-          toast({
-            variant: "destructive",
-            title: "Archival Access Denied",
-            description: error.message || "Identification sync failed.",
-          });
-        }
-      })
-      .finally(() => {
-        setGoogleLoading(false);
-      });
-  }, [auth, router]);
-
-  // Fallback for video loading to prevent permanent black screen
+  // Unified fallback to prevent permanent black screen if video fails
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVideoLoading(false);
@@ -95,7 +66,7 @@ export default function LoginPage() {
         updatedAt: serverTimestamp(),
       }, { merge: true });
     } catch (e) {
-      // Silent fail as Firestore might not be indexed yet during dev
+      console.warn("Archival Sync Error (Non-Fatal):", e);
     }
   };
 
@@ -105,13 +76,13 @@ export default function LoginPage() {
 
     if (isResetMode) {
       if (!email) {
-        toast({ title: "Email Required", description: "Provide address for reset protocol." });
+        toast({ title: "Email Required", description: "Please provide your archival address." });
         return;
       }
       setLoading(true);
       try {
         await sendPasswordResetEmail(auth, email);
-        toast({ title: "Transmission Sent", description: "Reset protocols dispatched." });
+        toast({ title: "Transmission Sent", description: "Password reset protocols dispatched to your email." });
         setIsResetMode(false);
       } catch (error: any) {
         toast({ variant: "destructive", title: "Protocol Error", description: error.message });
@@ -141,14 +112,20 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     if (!auth) return;
-    setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      await syncUserToFirestore(result.user);
+      router.push("/");
     } catch (error: any) {
-      setGoogleLoading(false);
-      toast({ variant: "destructive", title: "Sync Error", description: error.message });
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast({ title: "Session Interrupted", description: "Verification window was closed. Please try again." });
+      } else if (error.code === 'auth/popup-blocked') {
+        toast({ variant: "destructive", title: "Protocol Blocked", description: "Your browser blocked the verification window. Please allow popups." });
+      } else {
+        toast({ variant: "destructive", title: "Sync Error", description: error.message });
+      }
     }
   };
 
@@ -221,7 +198,7 @@ export default function LoginPage() {
                 required
               />
             )}
-            <Button disabled={loading || googleLoading} className="w-full h-9 bg-primary text-[9px] font-bold uppercase tracking-widest mt-2">
+            <Button disabled={loading} className="w-full h-9 bg-primary text-[9px] font-bold uppercase tracking-widest mt-2">
               {loading ? <Loader2 className="animate-spin w-4 h-4" /> : (isResetMode ? "Dispatch" : isSignUp ? "Create" : "Launch")}
             </Button>
           </form>
@@ -242,8 +219,8 @@ export default function LoginPage() {
             <div className="relative flex justify-center"><span className="bg-transparent px-2 text-[6px] text-white/40 uppercase tracking-[0.3em]">Sync</span></div>
           </div>
 
-          <Button variant="outline" disabled={googleLoading || loading} onClick={handleGoogleLogin} className="w-full h-9 bg-background/20 border-primary/30 text-[8px] font-bold uppercase tracking-widest">
-            {googleLoading ? <Loader2 className="animate-spin w-3 h-3" /> : <><GoogleIcon /> Google Sync</>}
+          <Button variant="outline" onClick={handleGoogleLogin} className="w-full h-9 bg-background/20 border-primary/30 text-[8px] font-bold uppercase tracking-widest">
+            <GoogleIcon /> Google Sync
           </Button>
         </CardContent>
       </Card>
