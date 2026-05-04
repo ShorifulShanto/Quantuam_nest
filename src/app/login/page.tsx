@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Loader2, ChevronLeft, KeyRound } from "lucide-react";
 import Link from "next/link";
-import { useAuth, useFirestore, useUser } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
@@ -38,7 +38,7 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(true); // Start true to check for redirect result
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   
@@ -50,6 +50,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!auth) return;
     
+    // Check for a result from the redirect login flow
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
@@ -58,30 +59,35 @@ export default function LoginPage() {
         }
       })
       .catch((error) => {
-        console.error("Redirect Auth Error:", error);
-        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-closure-redirect') {
-          toast({
-            variant: "destructive",
-            title: "Verification Failed",
-            description: error.message || "Archive synchronization interrupted.",
-          });
-        }
+        console.error("Auth Redirect Error:", error);
+        toast({
+          variant: "destructive",
+          title: "Synchronization Error",
+          description: error.message || "Archive access was interrupted.",
+        });
+      })
+      .finally(() => {
+        setGoogleLoading(false);
       });
   }, [auth, router]);
 
-  const syncUserToFirestore = (user: any) => {
+  const syncUserToFirestore = async (user: any) => {
     if (!db) return;
-    const userRef = doc(db, 'users', user.uid);
-    setDoc(userRef, {
-      id: user.uid,
-      displayName: user.displayName || displayName || "Cadet",
-      email: user.email,
-      photoURL: user.photoURL,
-      enrolledMissions: ["Basic Astronomy Protocol", "Solar System Fundamentals"],
-      rank: "Cadet",
-      updatedAt: serverTimestamp(),
-      lastLogin: serverTimestamp(),
-    }, { merge: true });
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, {
+        id: user.uid,
+        displayName: user.displayName || displayName || "Explorer",
+        email: user.email,
+        photoURL: user.photoURL,
+        enrolledMissions: ["Basic Astronomy Protocol", "Solar System Fundamentals"],
+        rank: "Explorer",
+        updatedAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+      }, { merge: true });
+    } catch (e) {
+      console.error("Firestore Sync Error:", e);
+    }
   };
 
   const handlePasswordReset = async (e: React.FormEvent) => {
@@ -132,7 +138,7 @@ export default function LoginPage() {
         userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
       
-      syncUserToFirestore(userCredential.user);
+      await syncUserToFirestore(userCredential.user);
       router.push("/");
     } catch (error: any) {
       toast({
@@ -149,19 +155,20 @@ export default function LoginPage() {
     if (!auth) return;
     setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
+    // Redirect avoids the 'popup closed' error in restrictive browsers
     try {
       await signInWithRedirect(auth, provider);
     } catch (error: any) {
       setGoogleLoading(false);
       toast({
         variant: "destructive",
-        title: "Google Sync Error",
+        title: "Sync Error",
         description: error.message,
       });
     }
   };
 
+  // 720p Optimized stream for fast loading
   const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777904615/13049989_1080_1920_30fps_itlps3.mp4";
 
   return (
@@ -182,29 +189,29 @@ export default function LoginPage() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]" />
       </div>
 
       <Link href="/" className="absolute top-6 left-6 z-50">
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full bg-[#F7F1D6] border-2 border-[#E43636] shadow-[0_0_15px_rgba(228,54,54,0.3)] hover:bg-[#F7F1D6]/90"
+          className="rounded-full bg-background/20 border-2 border-primary shadow-lg hover:bg-background/40"
         >
-          <ChevronLeft className="w-5 h-5 text-[#E43636]" />
+          <ChevronLeft className="w-5 h-5 text-primary" />
         </Button>
       </Link>
 
-      <Card className="w-full max-w-[320px] relative z-30 rounded-[2rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-[0_0_60px_rgba(228,54,54,0.4)] bg-[#F7F1D6]/20 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/10">
+      <Card className="w-full max-w-[320px] relative z-30 rounded-[2rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-2xl bg-[#F7F1D6]/20 backdrop-blur-3xl ring-1 ring-white/10">
         <CardHeader className="text-center pb-3 pt-6 px-5">
           <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(228,54,54,0.3)] border border-primary/30">
             {isResetMode ? <KeyRound className="w-6 h-6 text-primary" /> : <Rocket className="w-6 h-6 text-primary" />}
           </div>
-          <CardTitle className="font-headline text-xl font-bold tracking-tight text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+          <CardTitle className="font-headline text-xl font-bold tracking-tight text-white drop-shadow-md">
             {isResetMode ? "Reset Protocol" : isSignUp ? "Initialize" : "Welcome Back"}
           </CardTitle>
-          <p className="text-[#E43636] font-bold uppercase tracking-[0.3em] text-[8px] mt-1 drop-shadow-[0_0_8px_rgba(228,54,54,0.8)]">
-            Archive Protocol
+          <p className="text-primary font-bold uppercase tracking-[0.3em] text-[8px] mt-1">
+            Archive Access
           </p>
         </CardHeader>
 
@@ -217,7 +224,7 @@ export default function LoginPage() {
                   placeholder="Explorer Identity"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md shadow-sm placeholder:text-foreground/50"
+                  className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md"
                   required={isSignUp}
                 />
               )}
@@ -226,7 +233,7 @@ export default function LoginPage() {
                 placeholder="Explorer Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md shadow-sm placeholder:text-foreground/50"
+                className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md"
                 required
               />
               {!isResetMode && (
@@ -235,7 +242,7 @@ export default function LoginPage() {
                   placeholder="Access Key"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md shadow-sm placeholder:text-foreground/50"
+                  className="bg-background/40 border-primary/20 rounded-lg h-10 text-xs text-foreground focus:ring-primary backdrop-blur-md"
                   required
                 />
               )}
@@ -244,7 +251,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={loading || googleLoading}
-              className="w-full h-10 bg-primary text-white font-bold rounded-lg text-[9px] uppercase tracking-widest hover:scale-[1.01] transition-all shadow-lg shadow-primary/20"
+              className="w-full h-10 bg-primary text-white font-bold rounded-lg text-[9px] uppercase tracking-widest hover:scale-[1.01] transition-all shadow-lg"
             >
               {loading ? <Loader2 className="animate-spin w-4 h-4" /> : (isResetMode ? "Dispatch Reset" : isSignUp ? "Create Identity" : "Launch Mission")}
             </Button>
@@ -257,7 +264,7 @@ export default function LoginPage() {
                 setIsSignUp(!isSignUp);
                 setIsResetMode(false);
               }}
-              className="text-[8px] text-[#E43636] hover:underline uppercase tracking-widest font-bold drop-shadow-[0_0_8px_rgba(228,54,54,0.8)]"
+              className="text-[8px] text-primary hover:underline uppercase tracking-widest font-bold"
             >
               {isSignUp ? "Already identified? Join Protocol" : "New Explorer? Initialize here"}
             </button>
@@ -266,7 +273,7 @@ export default function LoginPage() {
               <button 
                 type="button"
                 onClick={() => setIsResetMode(!isResetMode)}
-                className="text-[8px] text-black hover:text-foreground uppercase tracking-widest font-bold drop-shadow-sm"
+                className="text-[8px] text-foreground hover:text-primary uppercase tracking-widest font-bold"
               >
                 {isResetMode ? "Return to authentication" : "Lost Key?"}
               </button>
@@ -275,29 +282,27 @@ export default function LoginPage() {
 
           <div className="relative py-0.5">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-black/10" />
+              <span className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-[6px] uppercase tracking-[0.3em]">
-              <span className="bg-transparent px-2 text-muted-foreground font-bold">Sync</span>
+              <span className="bg-transparent px-2 text-muted-foreground font-bold">Uplink</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={googleLoading || loading}
-              onClick={handleGoogleLogin}
-              className="w-full h-10 bg-background/20 border-border/40 text-[8px] text-foreground hover:bg-background/40 rounded-lg font-bold uppercase tracking-widest backdrop-blur-sm transition-all flex items-center justify-center"
-            >
-              {googleLoading ? <Loader2 className="animate-spin w-3 h-3" /> : (
-                <>
-                  <GoogleIcon />
-                  Google Sync
-                </>
-              )}
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={googleLoading || loading}
+            onClick={handleGoogleLogin}
+            className="w-full h-10 bg-background/20 border-primary/30 text-[8px] text-white hover:bg-background/40 rounded-lg font-bold uppercase tracking-widest transition-all"
+          >
+            {googleLoading ? <Loader2 className="animate-spin w-3 h-3" /> : (
+              <>
+                <GoogleIcon />
+                Google Sync
+              </>
+            )}
+          </Button>
         </CardContent>
       </Card>
     </div>

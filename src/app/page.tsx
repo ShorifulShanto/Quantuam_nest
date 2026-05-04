@@ -64,7 +64,7 @@ export default function Home() {
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Optimized video URL with custom Cloudinary parameters for better performance
+  // Optimized video URL capped at 720p for fast loading
   const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco,f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
@@ -109,7 +109,6 @@ export default function Home() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        {/* Adjusted background darkness to 75% for better UI focus */}
         <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
       </div>
       
