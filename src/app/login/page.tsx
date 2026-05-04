@@ -47,7 +47,7 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
-  // Handle Auth Redirect Result - Critical for browser compatibility
+  // Handle Auth Redirect Result - Essential for bypassing popup blockers
   useEffect(() => {
     if (!auth) return;
     
@@ -60,6 +60,7 @@ export default function LoginPage() {
       })
       .catch((error) => {
         console.error("Redirect Auth Error:", error);
+        // Silently handle common redirect cancellation
         if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-closure-redirect') {
           toast({
             variant: "destructive",
@@ -88,6 +89,7 @@ export default function LoginPage() {
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
+    
     if (!email) {
       toast({
         variant: "destructive",
@@ -102,14 +104,14 @@ export default function LoginPage() {
       await sendPasswordResetEmail(auth, email);
       toast({
         title: "Transmission Sent",
-        description: "Protocol reset instructions dispatched to your email.",
+        description: "Protocol reset instructions dispatched to your email archives.",
       });
       setIsResetMode(false);
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Protocol Error",
-        description: error.message,
+        description: error.message || "Failed to initiate reset sequence.",
       });
     } finally {
       setLoading(false);
@@ -151,7 +153,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      // Using Redirect strategy to bypass popup blockers
+      // Using Redirect strategy to ensure compatibility across all browsers and devices
       await signInWithRedirect(auth, provider);
     } catch (error: any) {
       setGoogleLoading(false);
@@ -163,8 +165,8 @@ export default function LoginPage() {
     }
   };
 
-  // Optimized video URL for performance with H.264
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
+  // Recalibrated with the requested cinematic video, optimized for rapid load and H.264 compatibility
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777904615/13049989_1080_1920_30fps_itlps3.mp4";
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 bg-black overflow-hidden">
@@ -178,13 +180,13 @@ export default function LoginPage() {
           preload="auto"
           onLoadedData={() => setIsVideoLoading(false)}
           className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
             isVideoLoading ? 'opacity-0' : 'opacity-100'
           )}
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
       </div>
 
       <Link href="/" className="absolute top-6 left-6 z-50">
@@ -197,8 +199,8 @@ export default function LoginPage() {
         </Button>
       </Link>
 
-      <Card className="w-full max-w-[320px] relative z-30 rounded-[2rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-[0_0_80px_rgba(228,54,54,0.4)] bg-[#F7F1D6]/20 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/10">
-        <CardHeader className="text-center pb-4 pt-8 px-5">
+      <Card className="w-full max-w-[340px] relative z-30 rounded-[2.5rem] border-2 border-white/20 overflow-hidden animate-in fade-in zoom-in duration-700 shadow-[0_0_80px_rgba(228,54,54,0.4)] bg-[#F7F1D6]/20 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/10">
+        <CardHeader className="text-center pb-4 pt-8 px-6">
           <div className="w-14 h-14 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(228,54,54,0.3)] border border-primary/30">
             {isResetMode ? <KeyRound className="w-7 h-7 text-primary" /> : <Rocket className="w-7 h-7 text-primary" />}
           </div>
@@ -210,7 +212,7 @@ export default function LoginPage() {
           </p>
         </CardHeader>
 
-        <CardContent className="p-5 pt-0 space-y-5">
+        <CardContent className="p-6 pt-0 space-y-6">
           <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-3">
               {isSignUp && !isResetMode && (
