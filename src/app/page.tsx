@@ -64,8 +64,8 @@ export default function Home() {
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Optimized video URL with resolution caps and H.264 for universal compatibility
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777228460/15735937-hd_1920_1080_30fps_1_oflmb5.mp4";
+  // Optimized video URL with custom Cloudinary parameters for better performance
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco,f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
 
   const handleFeatureAccess = (e: React.MouseEvent, href: string) => {
     if (!user) {
@@ -109,7 +109,8 @@ export default function Home() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
+        {/* Adjusted background darkness to 75% for better UI focus */}
+        <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
       </div>
       
       <div className="container relative z-10 mx-auto px-4 py-20 lg:py-32">

@@ -47,7 +47,7 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
-  // Handle Auth Redirect Result
+  // Handle Auth Redirect Result - Critical for browser compatibility
   useEffect(() => {
     if (!auth) return;
     
@@ -60,7 +60,7 @@ export default function LoginPage() {
       })
       .catch((error) => {
         console.error("Redirect Auth Error:", error);
-        if (error.code !== 'auth/popup-closed-by-user') {
+        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-closure-redirect') {
           toast({
             variant: "destructive",
             title: "Verification Failed",
@@ -151,6 +151,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
+      // Using Redirect strategy to bypass popup blockers
       await signInWithRedirect(auth, provider);
     } catch (error: any) {
       setGoogleLoading(false);
@@ -162,7 +163,7 @@ export default function LoginPage() {
     }
   };
 
-  // Optimized video URL for performance
+  // Optimized video URL for performance with H.264
   const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777563847/14777479_3840_2160_30fps_rujors.mp4";
 
   return (
@@ -183,7 +184,7 @@ export default function LoginPage() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
       </div>
 
       <Link href="/" className="absolute top-6 left-6 z-50">
@@ -205,7 +206,7 @@ export default function LoginPage() {
             {isResetMode ? "Reset Protocol" : isSignUp ? "Initialize" : "Welcome Back"}
           </CardTitle>
           <p className="text-[#E43636] font-bold uppercase tracking-[0.4em] text-[9px] mt-1.5 drop-shadow-[0_0_8px_rgba(228,54,54,0.8)]">
-            Archive Access
+            Archive Protocol
           </p>
         </CardHeader>
 
@@ -260,7 +261,7 @@ export default function LoginPage() {
               }}
               className="text-[9px] text-[#E43636] hover:underline uppercase tracking-widest font-bold drop-shadow-[0_0_8px_rgba(228,54,54,0.8)]"
             >
-              {isSignUp ? "Already identified? Log in" : "New Explorer? Initialize here"}
+              {isSignUp ? "Already identified? Join Protocol" : "New Explorer? Initialize here"}
             </button>
             
             {!isSignUp && (
@@ -269,7 +270,7 @@ export default function LoginPage() {
                 onClick={() => setIsResetMode(!isResetMode)}
                 className="text-[9px] text-black hover:text-foreground uppercase tracking-widest font-bold drop-shadow-sm"
               >
-                {isResetMode ? "Return to authentication" : "Lost your access key?"}
+                {isResetMode ? "Return to authentication" : "Lost Key?"}
               </button>
             )}
           </div>
@@ -279,7 +280,7 @@ export default function LoginPage() {
               <span className="w-full border-t border-black/10" />
             </div>
             <div className="relative flex justify-center text-[7px] uppercase tracking-[0.4em]">
-              <span className="bg-transparent px-3 text-muted-foreground font-bold drop-shadow-sm">External Sync</span>
+              <span className="bg-transparent px-3 text-muted-foreground font-bold drop-shadow-sm">Sync</span>
             </div>
           </div>
 
@@ -294,7 +295,7 @@ export default function LoginPage() {
               {googleLoading ? <Loader2 className="animate-spin w-4 h-4" /> : (
                 <>
                   <GoogleIcon />
-                  Sync with Google
+                  Google Sync
                 </>
               )}
             </Button>
