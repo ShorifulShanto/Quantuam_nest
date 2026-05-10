@@ -183,81 +183,6 @@ const solarData = [
     details: "The farthest major planet. Strongest winds in the solar system reaching 2,100 km/h.",
     surface: "Slush of water, ammonia, and methane.",
     discovery: "Urbain Le Verrier (1846)."
-  },
-  {
-    id: "pluto-view",
-    name: "Pluto",
-    type: "Dwarf Planet",
-    dist: "5.91b km",
-    gravity: "0.62 m/s²",
-    temp: "-225°C",
-    atmosphere: "Nitrogen, Methane.",
-    day: "153 hours",
-    moons: 5,
-    moonList: [{ name: "Charon", details: "Pluto's largest moon, half its size." }],
-    details: "Dwarf planet in the Kuiper Belt with a heart-shaped glacier named Tombaugh Regio.",
-    surface: "Mountains of water ice and plains of frozen navigation and methane.",
-    discovery: "Clyde Tombaugh (1930)."
-  },
-  {
-    id: "haumea-view",
-    name: "Haumea",
-    type: "Dwarf Planet",
-    dist: "6.45b km",
-    gravity: "0.40 m/s²",
-    temp: "-241°C",
-    atmosphere: "None detected.",
-    day: "3.9 hours",
-    moons: 2,
-    moonList: [{ name: "Hi'iaka", details: "Outer larger moon." }, { name: "Namaka", details: "Inner smaller moon." }],
-    details: "A fast-rotating, football-shaped dwarf planet in the Kuiper Belt.",
-    surface: "Crystalline water ice.",
-    discovery: "Mike Brown et al. (2004)."
-  },
-  {
-    id: "makemake-view",
-    name: "Makemake",
-    type: "Dwarf Planet",
-    dist: "6.85b km",
-    gravity: "0.50 m/s²",
-    temp: "-239°C",
-    atmosphere: "Transient methane.",
-    day: "22.5 hours",
-    moons: 1,
-    moonList: [{ name: "MK 2", details: "Small dark moon." }],
-    details: "One of the largest objects in the Kuiper Belt, named after the Rapa Nui creator god.",
-    surface: "Frozen methane and ethane.",
-    discovery: "Mike Brown et al. (2005)."
-  },
-  {
-    id: "eris-view",
-    name: "Eris",
-    type: "Dwarf Planet",
-    dist: "10.12b km",
-    gravity: "0.82 m/s²",
-    temp: "-231°C",
-    atmosphere: "Frozen methane.",
-    day: "25.9 hours",
-    moons: 1,
-    moonList: [{ name: "Dysnomia", details: "Only known moon." }],
-    details: "Once thought to be larger than Pluto, its discovery led to the reclassification of planets.",
-    surface: "Layer of methane ice.",
-    discovery: "Mike Brown et al. (2005)."
-  },
-  {
-    id: "sedna-view",
-    name: "Sedna",
-    type: "TNO",
-    dist: "12.9b km",
-    gravity: "0.33 m/s²",
-    temp: "-240°C",
-    atmosphere: "Unknown.",
-    day: "10 hours",
-    moons: 0,
-    moonList: [],
-    details: "One of the most distant known objects in our solar system, with a highly elliptical orbit.",
-    surface: "Reddish hue, likely from organic tholins.",
-    discovery: "Mike Brown et al. (2003)."
   }
 ];
 
@@ -280,7 +205,6 @@ export default function SolarSystemPage() {
   }, [user, isUserLoading, router, toast]);
 
   useEffect(() => {
-    // NASA EPIC API Integration - Live Blue Marble Protocol
     async function fetchEpicData() {
       try {
         const response = await fetch('https://epic.gsfc.nasa.gov/api/natural');
@@ -303,7 +227,7 @@ export default function SolarSystemPage() {
 
   if (isUserLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#050816]">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
@@ -312,7 +236,6 @@ export default function SolarSystemPage() {
   if (!user) return null;
 
   const getPlanetImage = (id: string, name: string) => {
-    // Prioritize EPIC dynamic imagery for Earth
     if (name === "Earth" && epicEarthImage) {
       return { imageUrl: epicEarthImage, description: "Live Earth capture from NASA EPIC", id: "epic-earth" };
     }
@@ -320,15 +243,15 @@ export default function SolarSystemPage() {
   };
 
   const MissionDetails = ({ body, img }: { body: typeof solarData[0], img: any }) => (
-    <DialogContent className="max-w-4xl bg-card border-border max-h-[90vh] overflow-y-auto rounded-[2rem] p-6 md:p-10">
+    <DialogContent className="max-w-4xl glass-card border-white/10 max-h-[90vh] overflow-y-auto rounded-[2rem] p-6 md:p-10 text-[#CBD5E1]">
       <DialogHeader className="mb-8">
         <div className="flex items-center gap-6">
-           <div className="w-16 h-16 rounded-full relative overflow-hidden border border-border/40">
+           <div className="w-16 h-16 rounded-full relative overflow-hidden border border-white/10">
               <Image src={img.imageUrl} alt={body.name} fill className="object-cover" unoptimized />
            </div>
            <div className="text-left">
-              <DialogTitle className="font-headline text-4xl text-foreground font-bold leading-none">{body.name}</DialogTitle>
-              <DialogDescription className="text-accent font-bold uppercase tracking-[0.2em] mt-2 text-[10px]">Body Archive</DialogDescription>
+              <DialogTitle className="font-headline text-4xl text-[#F8FAFC] font-bold leading-none">{body.name}</DialogTitle>
+              <DialogDescription className="text-primary font-bold uppercase tracking-[0.2em] mt-2 text-[10px]">Body Archive Record</DialogDescription>
            </div>
         </div>
       </DialogHeader>
@@ -336,13 +259,13 @@ export default function SolarSystemPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
          <div className="space-y-6">
             <div className="grid grid-cols-2 gap-3">
-               <Card className="bg-background/50 border-border/40 p-4 rounded-2xl shadow-sm">
-                  <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-widest mb-1 flex items-center gap-1.5"><Weight className="w-3 h-3 text-primary"/> Gravity</p>
-                  <p className="font-headline font-bold text-xl text-foreground">{body.gravity}</p>
+               <Card className="bg-white/5 border-white/10 p-4 rounded-2xl shadow-sm">
+                  <p className="text-[9px] text-[#94A3B8] uppercase font-bold tracking-widest mb-1 flex items-center gap-1.5"><Weight className="w-3 h-3 text-primary"/> Gravity</p>
+                  <p className="font-headline font-bold text-xl text-[#F8FAFC]">{body.gravity}</p>
                </Card>
-               <Card className="bg-background/50 border-border/40 p-4 rounded-2xl shadow-sm">
-                  <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-widest mb-1 flex items-center gap-1.5"><Thermometer className="w-3 h-3 text-primary"/> Temperature</p>
-                  <p className="font-headline font-bold text-xl text-foreground">{body.temp}</p>
+               <Card className="bg-white/5 border-white/10 p-4 rounded-2xl shadow-sm">
+                  <p className="text-[9px] text-[#94A3B8] uppercase font-bold tracking-widest mb-1 flex items-center gap-1.5"><Thermometer className="w-3 h-3 text-primary"/> Temperature</p>
+                  <p className="font-headline font-bold text-xl text-[#F8FAFC]">{body.temp}</p>
                </Card>
             </div>
 
@@ -353,9 +276,9 @@ export default function SolarSystemPage() {
                 </h4>
                 <div className="space-y-2">
                   {body.moonList.map((moon, idx) => (
-                    <div key={idx} className="p-4 bg-background/50 rounded-2xl border border-border/40">
-                      <p className="text-xs font-bold text-foreground mb-1">{moon.name}</p>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">{moon.details}</p>
+                    <div key={idx} className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <p className="text-xs font-bold text-[#F8FAFC] mb-1">{moon.name}</p>
+                      <p className="text-[10px] text-[#94A3B8] leading-relaxed">{moon.details}</p>
                     </div>
                   ))}
                 </div>
@@ -366,20 +289,20 @@ export default function SolarSystemPage() {
          <div className="space-y-6">
             <div className="space-y-2">
                <h4 className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
-                  <Mountain className="w-3.5 h-3.5" /> Geology
+                  <Mountain className="w-3.5 h-3.5" /> Geological Profile
                </h4>
-               <p className="text-[11px] text-muted-foreground leading-relaxed">{body.surface || "Analysis pending."}</p>
+               <p className="text-[11px] text-[#94A3B8] leading-relaxed">{body.surface || "Detailed analysis pending archive sync."}</p>
             </div>
 
             <div className="space-y-2">
                <h4 className="flex items-center gap-2 text-[10px] font-bold text-accent uppercase tracking-[0.2em]">
                   <Layers className="w-3.5 h-3.5" /> Atmosphere
                </h4>
-               <p className="text-[11px] text-muted-foreground leading-relaxed">{body.atmosphere}</p>
+               <p className="text-[11px] text-[#94A3B8] leading-relaxed">{body.atmosphere}</p>
             </div>
 
             <div className="pt-4">
-              <Button asChild className="w-full h-12 rounded-xl transition-all font-bold uppercase tracking-widest text-[9px]">
+              <Button asChild className="w-full h-12 rounded-xl transition-all font-bold uppercase tracking-widest text-[9px] cosmic-gradient">
                 <a href={`https://images.nasa.gov/search?q=${body.name}&media_type=video`} target="_blank" rel="noopener noreferrer">
                   <Rocket className="w-3.5 h-3.5 mr-2" /> NASA Visual Archives
                 </a>
@@ -391,33 +314,33 @@ export default function SolarSystemPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#EBE5C9] text-foreground transition-colors duration-500">
+    <div className="min-h-screen bg-[#050816] text-[#CBD5E1]">
       <main className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center animate-fade-in-up">
-           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-6">
+           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-1.5 rounded-full mb-6 shadow-[0_0_20px_rgba(93,169,255,0.2)]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
-            <span className="text-primary font-bold tracking-[0.2em] text-[9px] uppercase">Planetary Archives</span>
+            <span className="text-primary font-bold tracking-[0.2em] text-[9px] uppercase">Planetary Archives Active</span>
           </div>
-          <h1 className="font-headline text-4xl md:text-6xl font-bold text-foreground tracking-tight mb-4 drop-shadow-sm">
+          <h1 className="font-headline text-4xl md:text-6xl font-bold text-[#F8FAFC] tracking-tight mb-4">
             Solar System Exploration
           </h1>
-          <p className="text-muted-foreground text-sm max-w-2xl mx-auto leading-relaxed">
-            A comprehensive gateway to the celestial bodies within our solar system. Access high-fidelity 3D visualization or browse our archival planetary datasets using live NASA EPIC protocols.
+          <p className="text-[#94A3B8] text-sm max-w-2xl mx-auto leading-relaxed">
+            A high-fidelity gateway to the celestial bodies within our solar system. Access 3D visualizations or browse archival datasets using live NASA EPIC protocols.
           </p>
         </div>
 
         <div className="mb-8 flex justify-center">
-          <div className="bg-card/50 backdrop-blur-sm p-1 rounded-full border border-border flex gap-1 shadow-sm">
+          <div className="glass-card p-1 rounded-full flex gap-1 border-white/10">
             <Button 
               variant={viewMode === "interactive" ? "default" : "ghost"} 
               size="sm"
               onClick={() => setViewMode("interactive")}
               className="rounded-full px-6 h-10 text-[10px] font-bold tracking-widest uppercase"
             >
-              <Globe className="w-4 h-4 mr-2" /> 3D Eyes
+              <Globe className="w-4 h-4 mr-2" /> 3D View
             </Button>
             <Button 
               variant={viewMode === "grid" ? "default" : "ghost"} 
@@ -432,10 +355,10 @@ export default function SolarSystemPage() {
 
         {viewMode === "interactive" && (
           <section className="animate-in fade-in duration-500 h-[calc(100vh-350px)] min-h-[500px]">
-            <div className="w-full h-full rounded-[2.5rem] overflow-hidden border border-border bg-black shadow-lg relative">
+            <div className="w-full h-full rounded-[2.5rem] overflow-hidden border border-white/10 bg-black shadow-2xl relative">
               <iframe 
                 src="https://eyes.nasa.gov/apps/solar-system/#/home" 
-                className="w-full h-full border-none"
+                className="w-full h-full border-none opacity-80"
                 allowFullScreen
               />
             </div>
@@ -450,13 +373,13 @@ export default function SolarSystemPage() {
                 return (
                   <Dialog key={body.id}>
                     <DialogTrigger asChild>
-                      <Card className="bg-card border-2 border-primary hover:border-primary/80 transition-all cursor-pointer group rounded-[2rem] overflow-hidden h-full shadow-md hover:shadow-xl">
+                      <Card className="glass-card border-white/10 hover:border-primary/50 transition-all cursor-pointer group rounded-[2rem] overflow-hidden h-full card-hover-glow">
                         <div className="aspect-square relative overflow-hidden">
                           <Image src={img.imageUrl} alt={body.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" unoptimized />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                          <div className="absolute bottom-4 left-4 text-left">
-                            <p className="text-[8px] font-bold text-accent uppercase tracking-[0.3em] mb-1">{body.type}</p>
-                            <p className="text-xl font-headline font-bold leading-tight tracking-tight text-white">{body.name}</p>
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#050816]/90 via-transparent to-transparent" />
+                          <div className="absolute bottom-5 left-5 text-left">
+                            <p className="text-[8px] font-bold text-primary uppercase tracking-[0.3em] mb-1">{body.type}</p>
+                            <p className="text-xl font-headline font-bold leading-tight tracking-tight text-[#F8FAFC]">{body.name}</p>
                           </div>
                         </div>
                       </Card>

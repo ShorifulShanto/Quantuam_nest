@@ -32,18 +32,18 @@ function FeaturesGrid({ onAccess, onPrefetch }: { onAccess: (e: any, h: string) 
           className="group"
           style={{ animationDelay: `${idx * 0.1}s` }}
         >
-          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 border-2 border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-card/95 to-card/95 shadow-[0_0_20px_rgba(228,54,54,0.1)] hover:shadow-[0_0_35px_rgba(228,54,54,0.3)] ring-2 ring-primary">
+          <Card className="glass-card h-full transition-all duration-500 hover:-translate-y-1 rounded-2xl overflow-hidden shadow-2xl border-white/10 group-hover:border-primary/50 card-hover-glow">
             <CardHeader className="p-6">
-              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 transition-all border border-primary/40 shadow-[0_0_15px_rgba(228,54,54,0.3)]">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 transition-all border border-primary/20 shadow-[0_0_15px_rgba(93,169,255,0.2)]">
                 <feature.icon className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="font-headline text-xl text-foreground mb-1 font-bold">{feature.name}</CardTitle>
-              <CardDescription className="text-muted-foreground text-sm font-medium leading-relaxed">
+              <CardTitle className="font-headline text-xl text-[#F8FAFC] mb-1 font-bold">{feature.name}</CardTitle>
+              <CardDescription className="text-[#94A3B8] text-sm font-medium leading-relaxed">
                 {feature.desc}
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6 pt-0">
-              <div className="flex items-center text-primary font-bold text-xs uppercase tracking-widest gap-2 group-hover:text-[#B82C2C] transition-colors">
+              <div className="flex items-center text-primary font-bold text-xs uppercase tracking-widest gap-2 group-hover:text-accent transition-colors">
                 Launch Mission <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
               </div>
             </CardContent>
@@ -61,9 +61,8 @@ export default function Home() {
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco,f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777904662/14797636_3840_2160_30fps_opsbnq.mp4";
 
-  // Fallback to prevent black screen if video is delayed or blocked
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVideoLoading(false);
@@ -89,14 +88,14 @@ export default function Home() {
 
   if (isUserLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#050816]">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background">
+    <div className="min-h-screen relative overflow-hidden bg-[#050816]">
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -107,18 +106,18 @@ export default function Home() {
           onCanPlay={() => setIsVideoLoading(false)}
           onPlaying={() => setIsVideoLoading(false)}
           className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
             isVideoLoading ? 'opacity-0' : 'opacity-100'
           )}
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 hero-overlay" />
       </div>
       
       <div className="container relative z-10 mx-auto px-4 py-20 lg:py-32">
         <div className="max-w-3xl mb-16 animate-fade-in-up flex flex-col items-start gap-8">
-          <div className="inline-flex items-center gap-2 bg-primary/25 border border-primary/40 px-4 py-1.5 rounded-full shadow-[0_0_30px_rgba(228,54,54,0.8)] backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-1.5 rounded-full shadow-[0_0_30px_rgba(93,169,255,0.4)] backdrop-blur-md">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
@@ -126,18 +125,18 @@ export default function Home() {
             <span className="text-primary font-bold tracking-[0.2em] text-[11px] uppercase">Mission Protocol Active</span>
           </div>
           
-          <h1 className="font-headline text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.1] drop-shadow-[0_0_40px_rgba(0,0,0,0.8)]">
-            Quantum Nest <br/> <span className="text-primary drop-shadow-[0_0_45px_rgba(228,54,54,0.4)]">Cosmic Insights</span>
+          <h1 className="font-headline text-5xl md:text-7xl font-bold text-[#F8FAFC] tracking-tight leading-[1.1] drop-shadow-[0_0_40px_rgba(0,0,0,0.8)]">
+            Quantum Nest <br/> <span className="text-primary glow-primary">Cosmic Insights</span>
           </h1>
 
-          <p className="text-xl text-[#F7F1D6] leading-relaxed max-w-xl font-medium drop-shadow-[0_0_25px_rgba(0,0,0,0.9)]">
+          <p className="text-xl text-[#CBD5E1] leading-relaxed max-w-xl font-medium">
             A calm, intelligent gateway to the universe. Explore deep space archives and planetary libraries with refined human warmth.
           </p>
         </div>
 
         <Suspense fallback={
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-48 bg-card/20 rounded-2xl animate-pulse" />)}
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-48 glass-card rounded-2xl animate-pulse" />)}
           </div>
         }>
           <FeaturesGrid onAccess={handleFeatureAccess} onPrefetch={handlePrefetch} />

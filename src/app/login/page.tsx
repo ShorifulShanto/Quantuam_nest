@@ -45,11 +45,10 @@ export default function LoginPage() {
   const db = useFirestore();
   const { toast } = useToast();
 
-  // Unified fallback to prevent permanent black screen if video fails
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVideoLoading(false);
-    }, 3000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -121,18 +120,16 @@ export default function LoginPage() {
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: "Session Interrupted", description: "Verification window was closed. Please try again." });
-      } else if (error.code === 'auth/popup-blocked') {
-        toast({ variant: "destructive", title: "Protocol Blocked", description: "Your browser blocked the verification window. Please allow popups." });
       } else {
         toast({ variant: "destructive", title: "Sync Error", description: error.message });
       }
     }
   };
 
-  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/w_1280,vc_h264,q_auto:eco/v1777904615/13049989_1080_1920_30fps_itlps3.mp4";
+  const videoUrl = "https://res.cloudinary.com/drmpjeatm/video/upload/q_auto/f_auto/v1777904615/13049989_1080_1920_30fps_itlps3.mp4";
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 bg-black overflow-hidden">
+    <div className="min-h-screen relative flex items-center justify-center p-4 bg-[#050816] overflow-hidden">
       <div className="fixed inset-0 z-0">
         <video
           ref={videoRef}
@@ -149,43 +146,43 @@ export default function LoginPage() {
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 hero-overlay" />
       </div>
 
       <Link href="/" className="absolute top-6 left-6 z-50">
-        <Button variant="ghost" size="icon" className="rounded-full bg-background/20 border-2 border-primary">
-          <ChevronLeft className="w-5 h-5 text-primary" />
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10">
+          <ChevronLeft className="w-5 h-5 text-white" />
         </Button>
       </Link>
 
-      <Card className="w-full max-w-[280px] relative z-30 rounded-[2rem] border-2 border-white/20 bg-card/40 backdrop-blur-3xl shadow-2xl animate-in fade-in zoom-in duration-700">
+      <Card className="w-full max-w-[320px] relative z-30 rounded-[2rem] glass-card border-white/10 shadow-2xl animate-in fade-in zoom-in duration-700">
         <CardHeader className="text-center pt-8 pb-4">
-          <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center mx-auto mb-2 border border-primary/30 shadow-[0_0_15px_rgba(228,54,54,0.2)]">
-            {isResetMode ? <KeyRound className="w-5 h-5 text-primary" /> : <Rocket className="w-5 h-5 text-primary" />}
+          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4 border border-primary/30 shadow-[0_0_15px_rgba(93,169,255,0.4)]">
+            {isResetMode ? <KeyRound className="w-6 h-6 text-primary" /> : <Rocket className="w-6 h-6 text-primary" />}
           </div>
-          <CardTitle className="font-headline text-lg font-bold text-white uppercase tracking-tight">
-            {isResetMode ? "Reset" : isSignUp ? "Initialize" : "Welcome"}
+          <CardTitle className="font-headline text-2xl font-bold text-[#F8FAFC]">
+            {isResetMode ? "Reset Key" : isSignUp ? "Initialize" : "Welcome"}
           </CardTitle>
-          <p className="text-primary font-bold uppercase tracking-[0.4em] text-[7px] mt-1">Archive Protocol</p>
+          <p className="text-primary font-bold uppercase tracking-[0.4em] text-[8px] mt-1">Archive Protocol</p>
         </CardHeader>
 
-        <CardContent className="space-y-4 px-6 pb-8">
-          <form onSubmit={handleAuth} className="space-y-2">
+        <CardContent className="space-y-6 px-8 pb-10">
+          <form onSubmit={handleAuth} className="space-y-3">
             {isSignUp && !isResetMode && (
               <Input
-                placeholder="Identity"
+                placeholder="Identity Name"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="bg-background/40 border-primary/20 h-9 text-[10px]"
+                className="bg-white/5 border-white/10 h-11 text-xs"
                 required
               />
             )}
             <Input
               type="email"
-              placeholder="Email"
+              placeholder="Explorer Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-background/40 border-primary/20 h-9 text-[10px]"
+              className="bg-white/5 border-white/10 h-11 text-xs"
               required
             />
             {!isResetMode && (
@@ -194,32 +191,32 @@ export default function LoginPage() {
                 placeholder="Access Key"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-background/40 border-primary/20 h-9 text-[10px]"
+                className="bg-white/5 border-white/10 h-11 text-xs"
                 required
               />
             )}
-            <Button disabled={loading} className="w-full h-9 bg-primary text-[9px] font-bold uppercase tracking-widest mt-2">
-              {loading ? <Loader2 className="animate-spin w-4 h-4" /> : (isResetMode ? "Dispatch" : isSignUp ? "Create" : "Launch")}
+            <Button disabled={loading} className="w-full h-11 font-bold uppercase tracking-widest mt-2 text-[10px]">
+              {loading ? <Loader2 className="animate-spin w-4 h-4" /> : (isResetMode ? "Dispatch Reset" : isSignUp ? "Create Profile" : "Launch Mission")}
             </Button>
           </form>
 
           <div className="flex flex-col items-center gap-2">
-            <button onClick={() => { setIsSignUp(!isSignUp); setIsResetMode(false); }} className="text-[7px] text-primary uppercase font-bold tracking-widest hover:underline">
-              {isSignUp ? "Join Protocol" : "New Explorer?"}
+            <button onClick={() => { setIsSignUp(!isSignUp); setIsResetMode(false); }} className="text-[10px] text-primary uppercase font-bold tracking-widest hover:text-accent transition-colors">
+              {isSignUp ? "Existing Explorer? Login" : "New Discovery? Initialize"}
             </button>
             {!isSignUp && (
-              <button onClick={() => setIsResetMode(!isResetMode)} className="text-[7px] text-white/60 uppercase font-bold tracking-widest hover:text-white">
-                {isResetMode ? "Return" : "Lost Key?"}
+              <button onClick={() => setIsResetMode(!isResetMode)} className="text-[9px] text-[#94A3B8] uppercase font-bold tracking-widest hover:text-white transition-colors">
+                {isResetMode ? "Return to Login" : "Lost Access Key?"}
               </button>
             )}
           </div>
 
-          <div className="relative py-1">
+          <div className="relative py-2">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
-            <div className="relative flex justify-center"><span className="bg-transparent px-2 text-[6px] text-white/40 uppercase tracking-[0.3em]">Sync</span></div>
+            <div className="relative flex justify-center"><span className="bg-[#0B1023] px-3 text-[8px] text-[#94A3B8] uppercase tracking-[0.3em]">Sync</span></div>
           </div>
 
-          <Button variant="outline" onClick={handleGoogleLogin} className="w-full h-9 bg-background/20 border-primary/30 text-[8px] font-bold uppercase tracking-widest">
+          <Button variant="secondary" onClick={handleGoogleLogin} className="w-full h-11 text-[10px] font-bold uppercase tracking-widest">
             <GoogleIcon /> Google Sync
           </Button>
         </CardContent>
